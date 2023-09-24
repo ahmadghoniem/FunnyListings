@@ -1,18 +1,17 @@
 import SkeletonReel from "@/components/SkeletonReel";
 import { intlFormatDistance } from "date-fns";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { debounce } from "lodash";
 import { supabaseClient } from "@/store/supabaseClient";
+import Loader from "@/assets/images/loader.svg?react";
 
 const ShowReel = forwardRef((props, ref) => {
   const [offset, setOffset] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInView, setIsInView] = useState(false);
   const [isLast, setIsLast] = useState(false);
+  const loaderRef = useRef(null);
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
-  const PAGE_COUNT = 20;
-  const myref = useRef(null);
+  const PAGE_COUNT = 30;
 
   const fetchData = useCallback(async (offset, PAGE_COUNT) => {
     console.log("been calledx");
@@ -29,18 +28,17 @@ const ShowReel = forwardRef((props, ref) => {
     async (offset) => {
       setIsLoading(true);
       // Every time we fetch, we want to increase
-      setOffset((prevOffset) => prevOffset + 1);
+
       const { data: newData } = await fetchData(offset, PAGE_COUNT);
-
       setFetchedData((prevData) => [...prevData, ...newData]);
-
+      console.log(newData.length);
       if (newData.length < PAGE_COUNT) {
-        console.log(newData.length, PAGE_COUNT);
+        console.log("yes");
         setIsLast(true);
-      } else {
-        console.log(newData.length, PAGE_COUNT);
       }
       setIsLoading(false);
+
+      setOffset((prevOffset) => prevOffset + 1);
     },
     [fetchData],
   );
@@ -61,43 +59,31 @@ const ShowReel = forwardRef((props, ref) => {
           },
         )
         .subscribe();
-      const { data: newData } = await fetchData(0, PAGE_COUNT);
-      setFetchedData(newData);
+      // const { data: newData } = await fetchData(0, PAGE_COUNT);
+      // setFetchedData(newData);
     };
     listenToDbChange();
     // laod data once
   }, [fetchData]);
 
   useEffect(() => {
-    if (isInView) {
-      console.log("hera MAA");
-      loadMoreData(offset);
-      // setIsInView(false);
-    }
-  }, [isInView, loadMoreData]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      // return;
-      if (myref.current && typeof window !== "undefined") {
-        const container = myref.current;
-        const { bottom } = container.getBoundingClientRect();
-        const { innerHeight } = window;
-        setIsInView(innerHeight >= bottom);
+    const observer = new IntersectionObserver((entries) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        loadMoreData(offset);
       }
-    };
+    });
 
-    const handleDebouncedScroll = debounce(() => !isLast && handleScroll(), 20);
-
-    window.addEventListener("scroll", handleDebouncedScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleDebouncedScroll);
-    };
-  }, [myref, isLast]);
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+    if (isLast) {
+      observer.unobserve(loaderRef.current);
+    }
+  }, [fetchData, loadMoreData, isLast]);
 
   return (
-    <section ref={myref} className="mt-6 flex min-h-screen flex-col gap-6">
+    <section ref={ref} className="mt-6 flex min-h-screen flex-col gap-6">
       <div className="self-start">
         <p className="text-2xl">See what other people made!</p>
         <p className="text-sm">
@@ -124,9 +110,10 @@ const ShowReel = forwardRef((props, ref) => {
         ) : (
           <SkeletonReel />
         )}
-        {isLoading && (
-          <p className="mx-auto text-3xl text-green-600">Loading..</p>
-        )}
+      </div>
+      <div ref={loaderRef} className="mx-auto text-3xl text-green-600">
+        {isLoading && <Loader className="h-7 w-7" />}
+        {isLast && <p>you reached the end of the page</p>}
       </div>
     </section>
   );

@@ -18,18 +18,16 @@ const ListingGenerator = ({ insertRow }) => {
     const removeHintsCbFunc = () => {
       setHintsVisible(false);
     };
-    ele
-      .getElementById("removeHints")
-      .addEventListener("click", removeHintsCbFunc);
+    // ele
+    //   .getElementById("removeHints")
+    //   .addEventListener("click", removeHintsCbFunc);
 
     return () => {
-      ele
-        .getElementById("removeHints")
-        .removeEventListener("click", removeHintsCbFunc);
+      // ele
+      //   .getElementById("removeHints")
+      //   .removeEventListener("click", removeHintsCbFunc);
     };
   }, []);
-
-  const [image, setImage] = useState(null);
 
   const [XHandle, setXHandle] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(null);
@@ -72,17 +70,6 @@ const ListingGenerator = ({ insertRow }) => {
     [generateImage, insertRow, setIsSubmitted, setXHandle],
   );
 
-  const handleFileChange = useCallback(
-    async (e) => {
-      if (e.target.files && e.target.files[0]) {
-        let reader = new FileReader();
-        reader.readAsDataURL(e.target.files[0]);
-        reader.onload = (e) => setImage(e.target.result);
-      }
-    },
-    [setImage],
-  );
-
   return (
     <section className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center">
       {hintsVisible && (
@@ -92,12 +79,7 @@ const ListingGenerator = ({ insertRow }) => {
         />
       )}
       <div className="z-10">
-        <Listing
-          handleFileChange={handleFileChange}
-          image={image}
-          isSubmitted={isSubmitted}
-          ref={listingRef}
-        />
+        <Listing isSubmitted={isSubmitted} ref={listingRef} />
         <img
           ref={ListingImageRef}
           // will be filled later after the finalImage has been generated
