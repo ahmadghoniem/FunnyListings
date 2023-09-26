@@ -11,10 +11,9 @@ const ShowReel = forwardRef((props, ref) => {
   const loaderRef = useRef(null);
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
-  const PAGE_COUNT = 30;
+  const PAGE_COUNT = 6;
 
-  const fetchData = useCallback(async (offset, PAGE_COUNT) => {
-    console.log("been calledx");
+  const fetchData = useCallback(async () => {
     const from = offset * PAGE_COUNT;
     const to = from + PAGE_COUNT - 1;
     return await supabaseClient
@@ -22,26 +21,7 @@ const ShowReel = forwardRef((props, ref) => {
       .select("*")
       .range(from, to)
       .order("created_at", { ascending: false });
-  }, []);
-
-  const loadMoreData = useCallback(
-    async (offset) => {
-      setIsLoading(true);
-      // Every time we fetch, we want to increase
-
-      const { data: newData } = await fetchData(offset, PAGE_COUNT);
-      setFetchedData((prevData) => [...prevData, ...newData]);
-      console.log(newData.length);
-      if (newData.length < PAGE_COUNT) {
-        console.log("yes");
-        setIsLast(true);
-      }
-      setIsLoading(false);
-
-      setOffset((prevOffset) => prevOffset + 1);
-    },
-    [fetchData],
-  );
+  }, [offset]);
 
   useEffect(() => {
     const listenToDbChange = async () => {
@@ -59,28 +39,48 @@ const ShowReel = forwardRef((props, ref) => {
           },
         )
         .subscribe();
-      // const { data: newData } = await fetchData(0, PAGE_COUNT);
-      // setFetchedData(newData);
     };
     listenToDbChange();
+
+    const fetchOnMount = async () => {
+      const { data } = await fetchData(0);
+      setFetchedData(data);
+    };
+    fetchOnMount();
     // laod data once
-  }, [fetchData]);
+  }, []);
+
+  const loadMoreData = useCallback(async () => {
+    setIsLoading(true);
+    // Every time we fetch, we want to increase
+
+    const { data: newData } = await fetchData(offset);
+    setFetchedData((prevData) => [...prevData, ...newData]);
+    console.log(newData.length);
+
+    if (newData.length < PAGE_COUNT) {
+      setIsLast(true);
+    }
+    setIsLoading(false);
+  }, [fetchData, offset]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       const target = entries[0];
       if (target.isIntersecting) {
-        loadMoreData(offset);
+        // called
+        console.log("called");
+        loadMoreData();
+        setOffset((prevOffset) => prevOffset + 1);
       }
     });
-
     if (loaderRef.current) {
       observer.observe(loaderRef.current);
     }
     if (isLast) {
       observer.unobserve(loaderRef.current);
     }
-  }, [fetchData, loadMoreData, isLast]);
+  }, [isLast, loadMoreData]);
 
   return (
     <section ref={ref} className="mt-6 flex min-h-screen flex-col gap-6">
@@ -111,10 +111,10 @@ const ShowReel = forwardRef((props, ref) => {
           <SkeletonReel />
         )}
       </div>
-      <div ref={loaderRef} className="mx-auto text-3xl text-green-600">
+      <div ref={loaderRef} className="mx-auto text-3xl ">
         {isLoading && <Loader className="h-7 w-7" />}
-        {isLast && <p>you reached the end of the page</p>}
       </div>
+      {isLast && <p>you reached the end of the page</p>}
     </section>
   );
 });

@@ -1,10 +1,10 @@
 import { toPng } from "html-to-image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import HintsLayer from "@/assets/images/HintsLayer.svg?react";
 import Listing from "@/components/Listing";
 import PreSubmit from "@/components/PreSubmit";
 import PostSubmit from "@/components/PostSubmit";
+import HintsLayer from "@/components/HintsLayer";
 
 const ListingGenerator = ({ insertRow }) => {
   const listingRef = useRef(null);
@@ -72,12 +72,7 @@ const ListingGenerator = ({ insertRow }) => {
 
   return (
     <section className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center">
-      {hintsVisible && (
-        <HintsLayer
-          ref={hintsLayerRef}
-          className="absolute hidden lg:block lg:data-[are-hints-shown=false]:hidden"
-        />
-      )}
+      {hintsVisible && <HintsLayer className="" />}
       <div className="z-10">
         <Listing isSubmitted={isSubmitted} ref={listingRef} />
         <img

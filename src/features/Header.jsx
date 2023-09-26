@@ -35,6 +35,9 @@ const Header = () => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          <Button
+            onClick={() => document.documentElement.classList.toggle("dark")}
+          ></Button>
         </div>
       </div>
     </header>
