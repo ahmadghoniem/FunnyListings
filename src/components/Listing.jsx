@@ -1,17 +1,12 @@
 import React, { useCallback, useState } from "react";
 import placeholderImg from "@/assets/images/placeholder.png";
 import ListingInfo from "@/components/CardInfo";
-import NSFWFilter from "nsfw-filter";
 
 import { cn } from "@/lib/utils";
 const Listing = React.forwardRef(({ isSubmitted, className }, ref) => {
   const [image, setImage] = useState(null);
   const handleFileChange = useCallback(
     async (e) => {
-      const file = e.target.files[0];
-      const isSafe = await NSFWFilter.isSafe(file);
-      console.log("hey this image is .." + isSafe);
-
       if (e.target.files && e.target.files[0]) {
         let reader = new FileReader();
         reader.readAsDataURL(e.target.files[0]);
@@ -28,7 +23,7 @@ const Listing = React.forwardRef(({ isSubmitted, className }, ref) => {
       ref={ref}
       id="card-container"
       className={cn(
-        "h-full w-full max-w-xs overflow-hidden rounded-lg",
+        "h-full w-full max-w-xs overflow-hidden rounded-lg ",
         isSubmitted && "hidden",
         className,
       )}
