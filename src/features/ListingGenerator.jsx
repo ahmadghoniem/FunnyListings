@@ -1,36 +1,26 @@
 import { toPng } from "html-to-image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import Listing from "@/components/Listing";
 import PreSubmit from "@/components/PreSubmit";
 import PostSubmit from "@/components/PostSubmit";
 import HintsLayer from "@/components/HintsLayer";
+import ThemeContext from "@/components/ThemeContext";
 
-const ListingGenerator = ({ insertRow }) => {
+const ListingGenerator = ({ insertRow, checkIsSafe, isSafe }) => {
+  const { currentTheme } = useContext(ThemeContext);
+
   const listingRef = useRef(null);
   const ListingImageRef = useRef(null);
   const postSubmitRef = useRef(null);
   const preSubmitRef = useRef(null);
-  const hintsLayerRef = useRef(null);
-  const [hintsVisible, setHintsVisible] = useState(true);
-  useEffect(() => {
-    const ele = hintsLayerRef.current;
-    const removeHintsCbFunc = () => {
-      setHintsVisible(false);
-    };
-    // ele
-    //   .getElementById("removeHints")
-    //   .addEventListener("click", removeHintsCbFunc);
-
-    return () => {
-      // ele
-      //   .getElementById("removeHints")
-      //   .removeEventListener("click", removeHintsCbFunc);
-    };
-  }, []);
-
   const [XHandle, setXHandle] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(null);
+
+  useEffect(() => {
+    if (!isSafe) preSubmitRef.current.disableSubmitBtn();
+    else preSubmitRef.current.enableSubmitBtn();
+  }, [isSafe]);
 
   const generateImage = useCallback(async () => {
     if (listingRef.current === null) return;
@@ -38,13 +28,14 @@ const ListingGenerator = ({ insertRow }) => {
     try {
       const generatedImageBase64 = await toPng(listingRef.current, {
         cacheBust: true,
-        backgroundColor: "#ffffff",
+        backgroundColor:
+          currentTheme === "light" ? "hsl(0 0% 100%)" : "hsl(229 84% 5%)",
       });
       return generatedImageBase64;
     } catch (err) {
       alert(err);
     }
-  }, [listingRef]);
+  }, [listingRef, currentTheme]);
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -72,20 +63,26 @@ const ListingGenerator = ({ insertRow }) => {
 
   return (
     <section className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center">
-      {hintsVisible && <HintsLayer className="" />}
+      <HintsLayer className="" />
       <div className="z-10">
-        <Listing isSubmitted={isSubmitted} ref={listingRef} />
+        <Listing
+          isSubmitted={isSubmitted}
+          ref={listingRef}
+          checkIsSafe={checkIsSafe}
+          disableSubmitBtn={preSubmitRef.current?.disableSubmitBtn}
+        />
         <img
           ref={ListingImageRef}
           // will be filled later after the finalImage has been generated
           src=""
-          className={cn("max-w-xs", !isSubmitted && "hidden")}
+          className={cn("max-w-xs rounded-lg", !isSubmitted && "hidden")}
         />
         <PreSubmit
           ref={preSubmitRef}
           XHandle={XHandle}
           handleSubmit={handleSubmit}
           className={isSubmitted && "hidden"}
+          isSafe={isSafe}
         />
         <PostSubmit
           ref={postSubmitRef}

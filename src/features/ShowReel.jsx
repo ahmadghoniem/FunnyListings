@@ -11,7 +11,7 @@ const ShowReel = forwardRef((props, ref) => {
   const loaderRef = useRef(null);
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
-  const PAGE_COUNT = 6;
+  const PAGE_COUNT = 3;
 
   const fetchData = useCallback(async () => {
     const from = offset * PAGE_COUNT;
@@ -29,11 +29,16 @@ const ShowReel = forwardRef((props, ref) => {
         .channel("any")
         .on(
           "postgres_changes",
-          { event: "INSERT", schema: "public", table: "public" },
+          { event: "*", schema: "public", table: "public" },
           (payload) => {
             console.log(payload);
             if (payload.eventType === "INSERT") {
               setFetchedData((prevData) => [payload.new, ...prevData]);
+            } else if (payload.eventType === "DELETE") {
+              console.log(payload);
+              setFetchedData((prevData) => [
+                ...prevData.filter((datum) => datum.id === payload.old.id),
+              ]);
             }
             setLastFetched(payload.commit_timestamp);
           },
@@ -53,25 +58,25 @@ const ShowReel = forwardRef((props, ref) => {
   const loadMoreData = useCallback(async () => {
     setIsLoading(true);
     // Every time we fetch, we want to increase
-
-    const { data: newData } = await fetchData(offset);
+    const { data: newData } = await fetchData();
     setFetchedData((prevData) => [...prevData, ...newData]);
     console.log(newData.length);
 
     if (newData.length < PAGE_COUNT) {
       setIsLast(true);
     }
+    setOffset((prevOffset) => prevOffset + 1);
     setIsLoading(false);
-  }, [fetchData, offset]);
+  }, [fetchData]);
 
   useEffect(() => {
+    if (isLast) return;
+
     const observer = new IntersectionObserver((entries) => {
       const target = entries[0];
       if (target.isIntersecting) {
-        // called
         console.log("called");
         loadMoreData();
-        setOffset((prevOffset) => prevOffset + 1);
       }
     });
     if (loaderRef.current) {
@@ -80,7 +85,7 @@ const ShowReel = forwardRef((props, ref) => {
     if (isLast) {
       observer.unobserve(loaderRef.current);
     }
-  }, [isLast, loadMoreData]);
+  }, [isLast]);
 
   return (
     <section ref={ref} className="mt-6 flex min-h-screen flex-col gap-6">
@@ -98,7 +103,7 @@ const ShowReel = forwardRef((props, ref) => {
               className="col-span-6 max-w-[17.5rem] md:col-span-3 lg:col-span-2"
               key={id}
             >
-              <img src={image_base64} loading="lazy" />
+              <img src={image_base64} loading="lazy" className="rounded-lg" />
               <div className="mt-1 flex flex-row justify-between text-sm">
                 <p>By {X_handle || "Unknown"} </p>
                 <span className="text-foreground/80">
