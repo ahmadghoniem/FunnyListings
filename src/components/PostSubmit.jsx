@@ -26,7 +26,7 @@ const PostSubmit = forwardRef(({ XHandle, setIsSubmitted, className }, ref) => {
   );
 
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn("mt-1 flex flex-col gap-1", className)}>
       {XHandle && <p>{XHandle}</p>}
       <div className="flex flex-row justify-between gap-1">
         <Button
@@ -47,9 +47,9 @@ const PostSubmit = forwardRef(({ XHandle, setIsSubmitted, className }, ref) => {
         </Button>
 
         {/** TODO: are  you sure you want to delete! */}
-        <Button ref={deleteBtnRef} variant="destructive">
+        {/*         <Button ref={deleteBtnRef} variant="destructive">
           Delete
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
