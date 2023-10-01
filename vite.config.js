@@ -1,31 +1,37 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
-      react(),
+      nodePolyfills({
+        // To add only specific polyfills, add them here. If no option is passed, adds all polyfills
+        include: [
+          "path",
+          "stream",
+          "assert",
+          "events",
+          "zlib",
+          "util",
+          "buffer",
+        ],
+      }),
       svgr({
         // svgr options: https://react-svgr.com/docs/options/
         svgrOptions: {
           ref: true,
         },
       }),
+      react(),
     ],
     resolve: {
-      alias: true
-        ? {
-            "@": path.resolve(__dirname, "./src"),
-            "~": path.resolve(__dirname, "./"),
-            util: "util/",
-            zlib: "browserify-zlib",
-          }
-        : {
-            util: "util/",
-            zlib: "browserify-zlib",
-          },
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+        "~": path.resolve(__dirname, "./"),
+      },
     },
     define: {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
