@@ -11,11 +11,11 @@ if (import.meta.env.VITE_VERCEL_ENV === "production" || import.meta.env.PROD) {
   const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
   console.log(supabaseUrl, supabaseKey);
 
-  console.log("usingprocess.env.");
-  const a7a = process.env.VITE_MAMA_MIA;
-  const urrl = process.env.VITE_SUPABASE_URL;
+  console.log("checking mamamia.env.");
+  const a7a = import.meta.env.VITE_MAMA_MIA;
+  // const urrl = process.env.VITE_SUPABASE_URL;
   const keyy = import.meta.env.VITE_SUPABASE_KEY;
-  console.log(a7a, urrl, keyy);
+  console.log(a7a, keyy);
   // } else if (import.meta.env.PROD) {
   //   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   //   const supabaseKey = process.env.VITE_SUPABASE_KEY;
