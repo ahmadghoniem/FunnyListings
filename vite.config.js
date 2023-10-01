@@ -25,17 +25,11 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
-      // "process.env.VITE_SUPABASE_KEY": JSON.stringify(env.VITE_SUPABASE_KEY),
+      "process.env.VITE_MAMA_MIA": process.env.VITE_MAMA_MIA,
       // "process.env": {},
       // __APP_ENV__: process.env.VITE_VERCEL_ENV,
       VITE_SUPABASE_URL: JSON.stringify(env.VITE_SUPABASE_URL),
       VITE_SUPABASE_KEY: JSON.stringify(env.VITE_SUPABASE_KEY),
-      "process.env.VITE_SUPABASE_URL": JSON.stringify(
-        process.env.VITE_SUPABASE_URL,
-      ),
-      "process.env.VITE_SUPABASE_KEY": JSON.stringify(
-        process.env.VITE_SUPABASE_KEY,
-      ),
     },
   };
 });
