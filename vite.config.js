@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
+import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   return {
@@ -14,18 +15,18 @@ export default defineConfig(({ command, mode }) => {
       }),
     ],
     resolve: {
-      alias: {
-        "@":
-          mode === "development"
-            ? require("path").resolve(__dirname, "./src")
-            : "",
-        "~":
-          mode === "development"
-            ? require("path").resolve(__dirname, "./")
-            : "",
-        util: "util/",
-        zlib: "browserify-zlib",
-      },
+      alias:
+        mode === "development"
+          ? {
+              "@": path.resolve(__dirname, "./src"),
+              "~": path.resolve(__dirname, "./"),
+              util: "util/",
+              zlib: "browserify-zlib",
+            }
+          : {
+              util: "util/",
+              zlib: "browserify-zlib",
+            },
     },
     define: {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
