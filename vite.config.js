@@ -24,9 +24,9 @@ export default defineConfig(({ command, mode }) => {
         zlib: "browserify-zlib",
       },
     },
-    define: {
-      "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
-      "process.env.VITE_SUPABASE_KEY": JSON.stringify(env.VITE_SUPABASE_KEY),
-    },
+    // define: {
+    //   "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
+    //   "process.env.VITE_SUPABASE_KEY": JSON.stringify(env.VITE_SUPABASE_KEY),
+    // },
   };
 });
