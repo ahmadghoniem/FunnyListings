@@ -15,18 +15,17 @@ export default defineConfig(({ command, mode }) => {
       }),
     ],
     resolve: {
-      alias:
-        mode === "development"
-          ? {
-              "@": path.resolve(__dirname, "./src"),
-              "~": path.resolve(__dirname, "./"),
-              util: "util/",
-              zlib: "browserify-zlib",
-            }
-          : {
-              util: "util/",
-              zlib: "browserify-zlib",
-            },
+      alias: true
+        ? {
+            "@": path.resolve(__dirname, "./src"),
+            "~": path.resolve(__dirname, "./"),
+            util: "util/",
+            zlib: "browserify-zlib",
+          }
+        : {
+            util: "util/",
+            zlib: "browserify-zlib",
+          },
     },
     define: {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
