@@ -3,8 +3,8 @@ console.log(import.meta.env.MODE);
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
-
-if (import.meta.env.PROD) {
+console.log("exposed", VITE_VERCEL_ENV);
+if (VITE_VERCEL_ENV === "production") {
   //   console.log("here");
   const supabaseUrl = VITE_SUPABASE_URL;
   const supabaseKey = VITE_SUPABASE_KEY;

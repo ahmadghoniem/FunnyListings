@@ -27,6 +27,7 @@ export default defineConfig(({ command, mode }) => {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
       // "process.env.VITE_SUPABASE_KEY": JSON.stringify(env.VITE_SUPABASE_KEY),
       "process.env": process.env,
+      __APP_ENV__: process.env.VITE_VERCEL_ENV,
       VITE_SUPABASE_URL: JSON.stringify(env.VITE_SUPABASE_URL),
       VITE_SUPABASE_KEY: JSON.stringify(env.VITE_SUPABASE_KEY),
     },
