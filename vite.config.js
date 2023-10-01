@@ -26,7 +26,7 @@ export default defineConfig({
     VITE_MAMA_MIA: JSON.stringify(process.env.VITE_MAMA_MIA),
     VITE_SUPABASE_URL: JSON.stringify(process.env.VITE_SUPABASE_URL),
     VITE_SUPABASE_KEY: JSON.stringify(process.env.VITE_SUPABASE_KEY),
-    // "process.env": {},
+    "process.env": {},
     // __APP_ENV__: process.env.VITE_VERCEL_ENV,
   },
 });
