@@ -6,8 +6,8 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
 if (import.meta.env.PROD) {
   //   console.log("here");
-  const supabaseUrl = VITE_SUPABASE_URL;
-  const supabaseKey = VITE_SUPABASE_KEY;
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseKey = process.env.VITE_SUPABASE_KEY;
   // } else if (import.meta.env.PROD) {
   //   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   //   const supabaseKey = process.env.VITE_SUPABASE_KEY;
