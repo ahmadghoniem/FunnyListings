@@ -4,6 +4,7 @@ import path from "path";
 import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [
       react(),
@@ -26,8 +27,8 @@ export default defineConfig(({ command, mode }) => {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
       // "process.env.VITE_SUPABASE_KEY": JSON.stringify(env.VITE_SUPABASE_KEY),
       "process.env": process.env,
-      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL,
-      VITE_SUPABASE_KEY: process.env.VITE_SUPABASE_KEY,
+      VITE_SUPABASE_URL: JSON.stringify(env.VITE_SUPABASE_URL),
+      VITE_SUPABASE_KEY: JSON.stringify(env.VITE_SUPABASE_KEY),
     },
   };
 });
