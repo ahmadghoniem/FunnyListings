@@ -2,22 +2,22 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
+
 if (import.meta.env.VITE_VERCEL_ENV === "production" || import.meta.env.PROD) {
   console.log("VITE_VERCEL_ENV", import.meta.env.VITE_VERCEL_ENV);
-  console.log("PROD", import.meta.env.PROD);
 
-  console.log("using import.meta.");
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
-  console.log(supabaseUrl, supabaseKey);
 
-  console.log("checking mamamia.env.");
-  const a7a = import.meta.env.VITE_MAMA_MIA;
-  // const urrl = process.env.VITE_SUPABASE_URL;
-  const keyy = import.meta.env.VITE_SUPABASE_KEY;
-  console.log(a7a, keyy);
-  // } else if (import.meta.env.PROD) {
-  //   const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  //   const supabaseKey = process.env.VITE_SUPABASE_KEY;
+  console.console.log(
+    "VITE_MAMA_MIA using import.meta.env ",
+    import.meta.env.VITE_MAMA_MIA,
+  );
+  console.log("VITE_MAMA_MIA using JSON.stringify(env.VITE_MAMA_MIA) ", BEKO);
+  console.log(
+    "VITE_MAMA_MIA JSON.stringify(process.env.VITE_MAMA_MIA), ",
+    SEKO,
+  );
+  console.log("using process.env.VITE_VERCEL_ENV,", __APP_ENV__);
 }
 export const supabaseClient = createClient(supabaseUrl, supabaseKey);
