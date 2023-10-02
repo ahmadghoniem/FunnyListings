@@ -41,11 +41,11 @@ export default defineConfig(({ command, mode }) => {
       // __APP_ENV__: process.env.VITE_VERCEL_ENV,
       SHEKO: JSON.stringify(process.env.VITE_SUPABASE_URL),
 
-      BEKO: JSON.stringify(env.VITE_MAMA_MIA),
-      SEKO: JSON.stringify(process.env.VITE_MAMA_MIA),
+      BEKO: JSON.stringify(env.MAMA_MIA),
+      SEKO: JSON.stringify(process.env.MAMA_MIA),
     },
   };
 });
 
 // "~": import("path").then((path) => path.resolve(__dirname, "./")),
-// const a7a = process.env.VITE_MAMA_MIA;
+// const a7a = process.env.MAMA_MIA;
