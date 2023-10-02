@@ -3,15 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
-if (import.meta.env.VITE_VERCEL_ENV === "production" || import.meta.env.PROD) {
-  console.log("VITE_VERCEL_ENV", import.meta.env.VITE_VERCEL_ENV);
-
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
-
-  console.log("MAMA_MIA using import.meta.en ", import.meta.env.MAMA_MIA);
-  console.log("MAMA_MIA using JSON.stringify(env.MAMA_MIA) ", BEKO);
-  console.log("MAMA_MIA JSON.stringify(process.env.MAMA_MIA), ", SEKO);
-  console.log("using process.env.VITE_VERCEL_ENV,", __APP_ENV__);
+if (import.meta.env.VITE_VERCEL_ENV === "production") {
+  console.log(import.meta.env.VITE_VERCEL_ENV);
+  const supabaseUrl = SUPABASE_URL;
+  const supabaseKey = SUPABASE_KEY;
 }
 export const supabaseClient = createClient(supabaseUrl, supabaseKey);
