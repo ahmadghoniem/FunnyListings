@@ -9,8 +9,8 @@ if (import.meta.env.VITE_VERCEL_ENV === "production" || import.meta.env.PROD) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
-  console.console.log(
-    "VITE_MAMA_MIA using import.meta.env ",
+  console.log(
+    "VITE_MAMA_MIA using import.meta.en ",
     import.meta.env.VITE_MAMA_MIA,
   );
   console.log("VITE_MAMA_MIA using JSON.stringify(env.VITE_MAMA_MIA) ", BEKO);

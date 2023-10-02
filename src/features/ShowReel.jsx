@@ -8,7 +8,9 @@ const ShowReel = forwardRef((props, ref) => {
   const [offset, setOffset] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isLast, setIsLast] = useState(false);
+  const observerRef = useRef(null);
   const loaderRef = useRef(null);
+
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
   const PAGE_COUNT = 3;
@@ -70,22 +72,27 @@ const ShowReel = forwardRef((props, ref) => {
   }, [fetchData]);
 
   useEffect(() => {
-    if (isLast) return;
+    // Create the IntersectionObserver if it doesn't exist yet
+    if (!observerRef.current) {
+      observerRef.current = new IntersectionObserver((entries) => {
+        const target = entries[0];
+        if (target.isIntersecting) {
+          loadMoreData();
+        }
+      });
+    }
 
-    const observer = new IntersectionObserver((entries) => {
-      const target = entries[0];
-      if (target.isIntersecting) {
-        console.log("called");
-        loadMoreData();
-      }
-    });
     if (loaderRef.current) {
-      observer.observe(loaderRef.current);
+      observerRef.current.observe(loaderRef.current);
     }
-    if (isLast) {
-      observer.unobserve(loaderRef.current);
-    }
-  }, [isLast]);
+
+    // Stop observing and clean up when isLast changes
+    return () => {
+      if (loaderRef.current) {
+        observerRef.current.unobserve(loaderRef.current);
+      }
+    };
+  }, [isLast, loaderRef, loadMoreData]);
 
   return (
     <section ref={ref} className="mt-6 flex min-h-screen flex-col gap-6">
