@@ -1,10 +1,12 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
   return {
     plugins: [
       nodePolyfills({
@@ -35,13 +37,15 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       // "process.env.VITE_SUPABASE_URL": JSON.stringify(env.VITE_SUPABASE_URL),
-      // VITE_MAMA_MIA: JSON.stringify(process.env.VITE_MAMA_MIA),
-      // VITE_SUPABASE_URL: JSON.stringify(process.env.VITE_SUPABASE_URL),
-      // VITE_SUPABASE_KEY: JSON.stringify(process.env.VITE_SUPABASE_KEY),
+      __APP_ENV__: process.env.VITE_VERCEL_ENV,
       // __APP_ENV__: process.env.VITE_VERCEL_ENV,
-      "process.env": {},
+      SHEKO: JSON.stringify(process.env.VITE_SUPABASE_URL),
+
+      BEKO: JSON.stringify(env.VITE_MAMA_MIA),
+      SEKO: JSON.stringify(process.env.VITE_MAMA_MIA),
     },
   };
 });
 
 // "~": import("path").then((path) => path.resolve(__dirname, "./")),
+// const a7a = process.env.VITE_MAMA_MIA;
