@@ -62,7 +62,7 @@ const ListingGenerator = ({ insertRow, checkIsSafe, isSafe }) => {
   );
 
   return (
-    <section className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center">
+    <section className="relative flex min-h-[calc(100vh-4.25rem)] flex-col items-center justify-center">
       <HintsLayer className="" />
       <div className="z-10">
         <Listing

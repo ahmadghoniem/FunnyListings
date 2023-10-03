@@ -93,7 +93,7 @@ const Listing = forwardRef(({ isSubmitted, className, checkIsSafe }, ref) => {
     >
       <div
         id="image-container"
-        className="flex aspect-square w-80 flex-col items-center justify-center overflow-hidden rounded-lg bg-[#0000000d]"
+        className="flex aspect-square w-80 flex-col items-center justify-center overflow-hidden rounded-lg bg-muted"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDropEvent}
       >

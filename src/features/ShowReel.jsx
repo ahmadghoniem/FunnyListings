@@ -9,6 +9,8 @@ const ShowReel = forwardRef((props, ref) => {
   const [isLast, setIsLast] = useState(false);
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
+  const [offset, setOffset] = useState(null);
+
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
   const PAGE_COUNT = 3;
@@ -32,15 +34,17 @@ const ShowReel = forwardRef((props, ref) => {
           { event: "*", schema: "public", table: "public" },
           (payload) => {
             console.log(payload);
-            console.log("xxx");
 
             if (payload.eventType === "INSERT") {
-              setFetchedData((prevData) => [payload.new, ...prevData]);
+              console.log("insert detected");
+              setFetchedData((prevData) => {
+                console.log([payload.new, ...prevData]);
+                return [payload.new, ...prevData];
+              });
             } else if (payload.eventType === "DELETE") {
-              console.log(payload);
-              setFetchedData((prevData) => [
-                ...prevData.filter((datum) => datum.id === payload.old.id),
-              ]);
+              setFetchedData((prevData) =>
+                prevData.filter((datum) => datum.id !== payload.old.id),
+              );
             }
             setLastFetched(payload.commit_timestamp);
           },
@@ -62,11 +66,11 @@ const ShowReel = forwardRef((props, ref) => {
     // Pass the current offset
     const { data: newData } = await fetchData(offset);
     setFetchedData((prevData) => [...prevData, ...newData]);
-    console.log(newData.length);
 
     if (newData.length < PAGE_COUNT) {
       setIsLast(true);
     }
+    setOffset((prev) => prev + 1);
     setIsLoading(false);
   }, []);
 
@@ -77,13 +81,11 @@ const ShowReel = forwardRef((props, ref) => {
         const target = entries[0];
         if (target.isIntersecting) {
           // Get the current offset as a number
-          let currentOffset =
-            parseInt(loaderRef.current.dataset.offset, 10) || 0;
-
+          let currentOffset = parseInt(target.target.dataset.offset) || 0;
           // Increment the offset
           currentOffset += 1;
-          // Set the updated offset as a string
-          loaderRef.current.dataset.offset = currentOffset;
+          // Set the updated offset
+          target.target.dataset.offset = currentOffset;
 
           loadMoreData(currentOffset);
         }
@@ -95,16 +97,12 @@ const ShowReel = forwardRef((props, ref) => {
     }
 
     if (loaderRef.current && isLast) {
-      console.log("is last!");
       observerRef.current.unobserve(loaderRef.current);
     }
 
     // Stop observing and clean up when isLast changes
     return () => {
-      // TODO: UNOBSERVE ALL....
-      // if (loaderRef.current) {
-      //   observerRef.current.unobserve(loaderRef.current);
-      // }
+      observerRef.current.disconnect();
     };
   }, [isLast]);
 
@@ -117,7 +115,7 @@ const ShowReel = forwardRef((props, ref) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-6 items-center gap-y-8 md:gap-x-[calc((768px-(18rem*2))/3)] lg:gap-x-[calc((1024px-(18rem*3))/4)]">
+      <div className="mx-auto grid grid-cols-6 items-center gap-y-8  md:gap-x-[calc((768px-(18rem*2))/3)] lg:gap-x-[calc((1024px-(18rem*3))/4)]">
         {fetchedData?.length > 0 ? (
           fetchedData.map(({ id, created_at, image_base64, X_handle }) => (
             <div

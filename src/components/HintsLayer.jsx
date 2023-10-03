@@ -17,7 +17,7 @@ const HintsLayer = () => {
           y="0"
           width="796.5000976350354"
           height="664.4845793495266"
-          className="fill-background"
+          className="fill-transparent"
         ></rect>
         <g strokeLinecap="round" className="fill-foreground">
           <g transform="translate(108.63481179899861 305.0923444807596) rotate(0 51.19132524426408 27.305034464215908)">
