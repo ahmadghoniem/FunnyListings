@@ -5,17 +5,15 @@ import { supabaseClient } from "@/store/supabaseClient";
 import Loader from "@/assets/images/loader.svg?react";
 
 const ShowReel = forwardRef((props, ref) => {
-  const [offset, setOffset] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isLast, setIsLast] = useState(false);
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
-
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
   const PAGE_COUNT = 3;
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (offset) => {
     const from = offset * PAGE_COUNT;
     const to = from + PAGE_COUNT - 1;
     return await supabaseClient
@@ -23,7 +21,7 @@ const ShowReel = forwardRef((props, ref) => {
       .select("*")
       .range(from, to)
       .order("created_at", { ascending: false });
-  }, [offset]);
+  }, []);
 
   useEffect(() => {
     const listenToDbChange = async () => {
@@ -34,6 +32,8 @@ const ShowReel = forwardRef((props, ref) => {
           { event: "*", schema: "public", table: "public" },
           (payload) => {
             console.log(payload);
+            console.log("xxx");
+
             if (payload.eventType === "INSERT") {
               setFetchedData((prevData) => [payload.new, ...prevData]);
             } else if (payload.eventType === "DELETE") {
@@ -57,19 +57,18 @@ const ShowReel = forwardRef((props, ref) => {
     // laod data once
   }, []);
 
-  const loadMoreData = useCallback(async () => {
+  const loadMoreData = useCallback(async (offset) => {
     setIsLoading(true);
-    // Every time we fetch, we want to increase
-    const { data: newData } = await fetchData();
+    // Pass the current offset
+    const { data: newData } = await fetchData(offset);
     setFetchedData((prevData) => [...prevData, ...newData]);
     console.log(newData.length);
 
     if (newData.length < PAGE_COUNT) {
       setIsLast(true);
     }
-    setOffset((prevOffset) => prevOffset + 1);
     setIsLoading(false);
-  }, [fetchData]);
+  }, []);
 
   useEffect(() => {
     // Create the IntersectionObserver if it doesn't exist yet
@@ -77,7 +76,16 @@ const ShowReel = forwardRef((props, ref) => {
       observerRef.current = new IntersectionObserver((entries) => {
         const target = entries[0];
         if (target.isIntersecting) {
-          loadMoreData();
+          // Get the current offset as a number
+          let currentOffset =
+            parseInt(loaderRef.current.dataset.offset, 10) || 0;
+
+          // Increment the offset
+          currentOffset += 1;
+          // Set the updated offset as a string
+          loaderRef.current.dataset.offset = currentOffset;
+
+          loadMoreData(currentOffset);
         }
       });
     }
@@ -86,13 +94,19 @@ const ShowReel = forwardRef((props, ref) => {
       observerRef.current.observe(loaderRef.current);
     }
 
+    if (loaderRef.current && isLast) {
+      console.log("is last!");
+      observerRef.current.unobserve(loaderRef.current);
+    }
+
     // Stop observing and clean up when isLast changes
     return () => {
-      if (loaderRef.current) {
-        observerRef.current.unobserve(loaderRef.current);
-      }
+      // TODO: UNOBSERVE ALL....
+      // if (loaderRef.current) {
+      //   observerRef.current.unobserve(loaderRef.current);
+      // }
     };
-  }, [isLast, loaderRef, loadMoreData]);
+  }, [isLast]);
 
   return (
     <section ref={ref} className="mt-6 flex min-h-screen flex-col gap-6">
@@ -123,7 +137,7 @@ const ShowReel = forwardRef((props, ref) => {
           <SkeletonReel />
         )}
       </div>
-      <div ref={loaderRef} className="mx-auto text-3xl ">
+      <div ref={loaderRef} data-offset={0} className="mx-auto text-3xl">
         {isLoading && <Loader className="h-7 w-7" />}
       </div>
       {isLast && <p>you reached the end of the page</p>}
