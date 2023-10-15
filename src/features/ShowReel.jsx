@@ -2,15 +2,12 @@ import SkeletonReel from "@/components/SkeletonReel";
 import { intlFormatDistance } from "date-fns";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { supabaseClient } from "@/store/supabaseClient";
-import Loader from "@/assets/images/loader.svg?react";
 
 const ShowReel = forwardRef((props, ref) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLast, setIsLast] = useState(false);
   const observerRef = useRef(null);
   const loaderRef = useRef(null);
-  const [offset, setOffset] = useState(null);
-
   const [fetchedData, setFetchedData] = useState([]);
   const [lastFetched, setLastFetched] = useState(() => new Date().getTime());
   const PAGE_COUNT = 3;
@@ -70,7 +67,6 @@ const ShowReel = forwardRef((props, ref) => {
     if (newData.length < PAGE_COUNT) {
       setIsLast(true);
     }
-    setOffset((prev) => prev + 1);
     setIsLoading(false);
   }, []);
 
@@ -122,7 +118,7 @@ const ShowReel = forwardRef((props, ref) => {
               className="col-span-6 max-w-[17.5rem] md:col-span-3 lg:col-span-2"
               key={id}
             >
-              <img src={image_base64} loading="lazy" className="rounded-lg" />
+              <img src={image_base64} className="rounded-lg" />
               <div className="mt-1 flex flex-row justify-between text-sm">
                 <p>By {X_handle || "Unknown"} </p>
                 <span className="text-foreground/80">
@@ -132,13 +128,17 @@ const ShowReel = forwardRef((props, ref) => {
             </div>
           ))
         ) : (
-          <SkeletonReel />
+          <SkeletonReel length={3} />
         )}
       </div>
-      <div ref={loaderRef} data-offset={0} className="mx-auto text-3xl">
-        {isLoading && <Loader className="h-7 w-7" />}
+      <div
+        ref={loaderRef}
+        data-offset={0}
+        className="mx-auto mb-8 grid grid-cols-6 items-center gap-y-8  md:gap-x-[calc((768px-(18rem*2))/3)] lg:gap-x-[calc((1024px-(18rem*3))/4)]"
+      >
+        {isLoading && <SkeletonReel length={3} />}
       </div>
-      {isLast && <p>you reached the end of the page</p>}
+      {isLast && <p>End of results</p>}
     </section>
   );
 });
